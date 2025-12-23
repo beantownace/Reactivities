@@ -1,3 +1,6 @@
+using System.Reflection.Metadata;
+using Application.Activities.Queries;
+using Application.Core;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -9,13 +12,22 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddCors();
+builder.Services.AddMediatR(x =>
+    x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>());
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+var assemblyToScan = typeof(AssemblyReference).Assembly;
+
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddMaps(assemblyToScan);
+});
 
 var app = builder.Build();
 
-app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod()
-.WithOrigins("http://localhost:3000", "https://localhost:3000"));
+// Configure the HTTP request pipeline.
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
+    .WithOrigins("http://localhost:3000", "https://localhost:3000"));
 
 app.MapControllers();
 
@@ -31,6 +43,7 @@ try
 catch (Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred during migration");
+    logger.LogError(ex, "An error occurred during migration.");
 }
+
 app.Run();
