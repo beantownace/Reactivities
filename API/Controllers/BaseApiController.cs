@@ -1,5 +1,4 @@
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -10,7 +9,7 @@ namespace API.Controllers
     {
         private IMediator? _mediator;
 
-        protected IMediator Mediator => 
+        protected IMediator Mediator =>
             _mediator ??= HttpContext.RequestServices.GetService<IMediator>()
                 ?? throw new InvalidOperationException("IMediator service is unavailable");
     }
