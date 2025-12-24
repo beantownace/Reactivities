@@ -21,12 +21,12 @@ jobs:
       - name: Setup node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "24"
+          node-version: "20"
 
       - name: Install deps and build react app
         run: |
           cd client
-          npm Install
+          npm install
           npm run build
 
       - name: Set up .NET Core
