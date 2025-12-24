@@ -1,7 +1,7 @@
-using System.Reflection.Metadata;
 using Application.Activities.Queries;
 using Application.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,12 +15,8 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddCors();
 builder.Services.AddMediatR(x =>
     x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>());
-
-var assemblyToScan = typeof(AssemblyReference).Assembly;
-
-builder.Services.AddAutoMapper(config =>
-{
-    config.AddMaps(assemblyToScan);
+builder.Services.AddAutoMapper(cfg => {
+    cfg.AddProfile<MappingProfiles>(); 
 });
 
 var app = builder.Build();
